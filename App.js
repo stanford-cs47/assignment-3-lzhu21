@@ -8,7 +8,7 @@
 */
 
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Image, Dimensions, TextInput, Button, Alert, Keyboard, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Image, Dimensions, TextInput, Button, Alert, Keyboard, TouchableOpacity, TouchableWithoutFeedback, FlatList } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Images, Colors } from './App/Themes'
 import APIRequest from './App/Config/APIRequest'
@@ -47,6 +47,16 @@ export default class App extends React.Component {
     this.setState({loading: false, articles: resultArticles})
   }
 
+  renderArticle = (index, item) => {
+    <Article
+      text={item}
+    />
+  }
+
+  keyExtractor = index => {
+    return index.toString();
+  }
+
   render() {
     const {articles, loading} = this.state;
 
@@ -54,34 +64,37 @@ export default class App extends React.Component {
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <SafeAreaView style={styles.container}>
 
-
           <View style={styles.topbar}>
             <Image style={styles.logoimg} source={Images.logo}/>
           </View>
 
-
-            <View style={styles.searchbar}>
-              <TextInput
-                style={styles.textinput}
-                onChangeText={text => this.onChangeText(text)}
-                onSubmitEditing={text => this.loadArticles(text)}
-                value={this.state.searchText}
+          <View style={styles.searchbar}>
+            <TextInput
+              style={styles.textinput}
+              onChangeText={text => this.onChangeText(text)}
+              onSubmitEditing={text => this.loadArticles(text)}
+              value={this.state.searchText}
+            />
+            <TouchableOpacity
+              onPress={text => this.loadArticles(text)}
+              style={styles.button}>
+              <FontAwesome
+                name='search'
+                size={25}
+                color='#58b1cc'
               />
-              <TouchableOpacity
-                onPress={this.loadArticles}
-                style={styles.button}>
-                <FontAwesome
-                  name='search'
-                  size={25}
-                  color='#58b1cc'
-                />
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
+          </View>
 
 
-          {/*And some news*/}
+          <View style={styles.flatlist}>
+          <FlatList
+            data={this.state.articles}
+            renderItem={({ index, item }) => this.renderArticle(index, item)}
+            keyExtractor={(item, index) => this.keyExtractor(index)}
+          />
+          </FlatList>
 
-          {/*Though, you can style and organize these however you want! power to you 😎*/}
 
           {/*If you want to return custom stuff from the NYT API, checkout the APIRequest file!*/}
 
