@@ -8,7 +8,8 @@
 */
 
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Image, Dimensions, TextInput, Button, Alert, Keyboard, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import { Images, Colors } from './App/Themes'
 import APIRequest from './App/Config/APIRequest'
 
@@ -22,6 +23,10 @@ export default class App extends React.Component {
     articles : [],
     searchText: '',
     category: ''
+  }
+
+  onChangeText = text => {
+   this.setState({searchText: text});
   }
 
   componentDidMount() {
@@ -46,24 +51,47 @@ export default class App extends React.Component {
     const {articles, loading} = this.state;
 
     return (
-      <SafeAreaView style={styles.container}>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <SafeAreaView style={styles.container}>
 
-        <Text style={{textAlign: 'center'}}>Have fun! :) {"\n"} Start by changing the API Key in "./App/Config/AppConfig.js" {"\n"} Then, take a look at the following components: {"\n"} NavigationButtons {"\n"} Search {"\n"} News {"\n"} 🔥</Text>
 
-        {/*First, you'll need a logo*/}
+          <View style={styles.topbar}>
+            <Image style={styles.logoimg} source={Images.logo}/>
+          </View>
 
-        {/*Then your search bar*/}
 
-        {/*And some news*/}
+            <View style={styles.searchbar}>
+              <TextInput
+                style={styles.textinput}
+                onChangeText={text => this.onChangeText(text)}
+                onSubmitEditing={text => this.loadArticles(text)}
+                value={this.state.searchText}
+              />
+              <TouchableOpacity
+                onPress={this.loadArticles}
+                style={styles.button}>
+                <FontAwesome
+                  name='search'
+                  size={25}
+                  color='#58b1cc'
+                />
+              </TouchableOpacity>
+            </View>
 
-        {/*Though, you can style and organize these however you want! power to you 😎*/}
 
-        {/*If you want to return custom stuff from the NYT API, checkout the APIRequest file!*/}
+          {/*And some news*/}
 
-      </SafeAreaView>
+          {/*Though, you can style and organize these however you want! power to you 😎*/}
+
+          {/*If you want to return custom stuff from the NYT API, checkout the APIRequest file!*/}
+
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     );
   }
 }
+
+var { height, width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -71,5 +99,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center'
-  }
+  },
+  topbar: {
+    flex: 1,
+    top: 35,
+    position: 'absolute',
+  },
+  logoimg: {
+    width: 0.9 * width,
+    height: 100,
+    resizeMode: 'contain',
+  },
+  searchbar: {
+    flex: 1,
+    position: 'absolute',
+    top: 140,
+    flexDirection: 'row',
+    borderRadius: 15,
+    height: 50,
+    backgroundColor: '#efefef',
+    padding: 10,
+    paddingLeft: 20,
+  },
+  textinput: {
+    width: 0.75 * width,
+  },
+  button: {
+    height: 25,
+    paddingRight: 10
+  },
 });
