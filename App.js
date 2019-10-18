@@ -16,6 +16,7 @@ import { material, iOSUIKit, human } from 'react-native-typography'
 
 import News from './App/Components/News'
 import Search from './App/Components/Search'
+import Article from './App/Components/Article'
 
 export default class App extends React.Component {
 
@@ -49,15 +50,13 @@ export default class App extends React.Component {
   }
 
   renderArticle = (item) => {
-    let url = item.url;
-    console.log(typeof url);
-    return(
-    <TouchableOpacity style={styles.article} onPress={() => Linking.openURL(url)}>
-      <Text style={human.title2}>{item.title}</Text>
-      <Text style={iOSUIKit.subhead}>{item.snippet}</Text>
-      <Text style={iOSUIKit.footnoteEmphasized}>{item.byline}</Text>
-      <Text style={material.caption}>{item.date}</Text>
-    </TouchableOpacity>)
+    return(<Article
+      title={item.title}
+      snippet={item.snippet}
+      byline={item.byline}
+      date={item.date}
+      url={item.url}
+    />)
   }
 
   keyExtractor = index => {
