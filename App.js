@@ -9,10 +9,11 @@
 
 import React from 'react';
 import { StyleSheet, Text, View, SafeAreaView, Image, Dimensions, TextInput, Button, Alert, Keyboard, TouchableOpacity, TouchableWithoutFeedback, FlatList, Linking, ActivityIndicator } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Images, Colors } from './App/Themes'
 import APIRequest from './App/Config/APIRequest'
 import { material, iOSUIKit, human } from 'react-native-typography'
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 import News from './App/Components/News'
 import Search from './App/Components/Search'
@@ -57,6 +58,12 @@ export default class App extends React.Component {
       date={item.date}
       url={item.url}
     />)
+  }
+
+  deleteArticle = index => {
+    let articlesCopy = JSON.parse(JSON.stringify(this.state.articles));
+    articlesCopy.splice(index, 1);
+    this.setState({ articles: articlesCopy });
   }
 
   keyExtractor = index => {
@@ -128,10 +135,24 @@ export default class App extends React.Component {
             </View>
 
             <View style={styles.flatlist}>
-              <FlatList
+              <SwipeListView
                 data={this.state.articles}
                 renderItem={({ item }) => this.renderArticle( item )}
                 keyExtractor={(item, index) => this.keyExtractor(index)}
+                renderHiddenItem={ (item, index) => (
+                    <View style={styles.backrow}>
+                      <TouchableOpacity
+                        onPress={() => this.deleteArticle(index)}
+                        style={styles.deletebutton}>
+                        <MaterialCommunityIcons
+                          name='delete-outline'
+                          size={40}
+                          color='#aaa'
+                        />
+                      </TouchableOpacity>
+                    </View>
+                )}
+                leftOpenValue={75}
               />
             </View>
 
@@ -199,5 +220,15 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  backrow: {
+    backgroundColor: '#eee',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    paddingLeft: 15,
+  },
+  deletebutton: {
+    margin: 0
   },
 });

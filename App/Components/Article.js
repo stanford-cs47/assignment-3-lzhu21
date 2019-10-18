@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    padding: 20
+    padding: 20,
+    backgroundColor: '#fff'
   },
 });
