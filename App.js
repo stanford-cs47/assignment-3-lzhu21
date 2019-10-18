@@ -8,7 +8,7 @@
 */
 
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Image, Dimensions, TextInput, Button, Alert, Keyboard, TouchableOpacity, TouchableWithoutFeedback, FlatList, Linking } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Image, Dimensions, TextInput, Button, Alert, Keyboard, TouchableOpacity, TouchableWithoutFeedback, FlatList, Linking, ActivityIndicator } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Images, Colors } from './App/Themes'
 import APIRequest from './App/Config/APIRequest'
@@ -20,7 +20,7 @@ import Search from './App/Components/Search'
 export default class App extends React.Component {
 
   state = {
-    loading: true,
+    loading: false,
     articles : [],
     searchText: '',
     category: ''
@@ -67,45 +67,79 @@ export default class App extends React.Component {
   render() {
     const {articles, loading} = this.state;
 
-    return (
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <SafeAreaView style={styles.container}>
+    if(this.state.loading) {
+      return (
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <SafeAreaView style={styles.container}>
 
-          <View style={styles.topbar}>
-            <Image style={styles.logoimg} source={Images.logo}/>
-          </View>
+            <View style={styles.topbar}>
+              <Image style={styles.logoimg} source={Images.logo}/>
+            </View>
 
-          <View style={styles.searchbar}>
-            <TextInput
-              style={styles.textinput}
-              onChangeText={text => this.onChangeText(text)}
-              onSubmitEditing={() => this.loadArticles(this.state.searchText)}
-              value={this.state.searchText}
-            />
-            <TouchableOpacity
-              onPress={() => this.loadArticles(this.state.searchText)}
-              style={styles.button}>
-              <FontAwesome
-                name='search'
-                size={25}
-                color='#58b1cc'
+            <View style={styles.searchbar}>
+              <TextInput
+                style={styles.textinput}
+                onChangeText={text => this.onChangeText(text)}
+                onSubmitEditing={() => this.loadArticles(this.state.searchText)}
+                value={this.state.searchText}
               />
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity
+                onPress={() => this.loadArticles(this.state.searchText)}
+                style={styles.button}>
+                <FontAwesome
+                  name='search'
+                  size={25}
+                  color='#58b1cc'
+                />
+              </TouchableOpacity>
+            </View>
 
-          <View style={styles.flatlist}>
-            <FlatList
-              data={this.state.articles}
-              renderItem={({ item }) => this.renderArticle( item )}
-              keyExtractor={(item, index) => this.keyExtractor(index)}
-            />
-          </View>
+            <View style={styles.loading}>
+              <ActivityIndicator animating={true} color='#bbb' size={60} />
+            </View>
 
-          {/*If you want to return custom stuff from the NYT API, checkout the APIRequest file!*/}
+          </SafeAreaView>
+        </TouchableWithoutFeedback>
+      )
+    } else {
+      return (
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <SafeAreaView style={styles.container}>
 
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-    );
+            <View style={styles.topbar}>
+              <Image style={styles.logoimg} source={Images.logo}/>
+            </View>
+
+            <View style={styles.searchbar}>
+              <TextInput
+                style={styles.textinput}
+                onChangeText={text => this.onChangeText(text)}
+                onSubmitEditing={() => this.loadArticles(this.state.searchText)}
+                value={this.state.searchText}
+              />
+              <TouchableOpacity
+                onPress={() => this.loadArticles(this.state.searchText)}
+                style={styles.button}>
+                <FontAwesome
+                  name='search'
+                  size={25}
+                  color='#58b1cc'
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.flatlist}>
+              <FlatList
+                data={this.state.articles}
+                renderItem={({ item }) => this.renderArticle( item )}
+                keyExtractor={(item, index) => this.keyExtractor(index)}
+              />
+            </View>
+
+          </SafeAreaView>
+        </TouchableWithoutFeedback>
+      );
+    }
   }
 }
 
@@ -159,5 +193,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     padding: 20
+  },
+  loading: {
+    flex: .7,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 });
