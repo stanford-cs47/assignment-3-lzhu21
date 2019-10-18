@@ -95,7 +95,7 @@ export default class App extends React.Component {
             </View>
 
             <View style={styles.loading}>
-              <ActivityIndicator animating={true} color='#bbb' size={60} />
+              <ActivityIndicator animating={true} color='#bbb' size='large' />
             </View>
 
           </SafeAreaView>
