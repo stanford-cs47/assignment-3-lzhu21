@@ -8,10 +8,11 @@
 */
 
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Image, Dimensions, TextInput, Button, Alert, Keyboard, TouchableOpacity, TouchableWithoutFeedback, FlatList } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Image, Dimensions, TextInput, Button, Alert, Keyboard, TouchableOpacity, TouchableWithoutFeedback, FlatList, Linking } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Images, Colors } from './App/Themes'
 import APIRequest from './App/Config/APIRequest'
+import { material, iOSUIKit, human } from 'react-native-typography'
 
 import News from './App/Components/News'
 import Search from './App/Components/Search'
@@ -44,13 +45,19 @@ export default class App extends React.Component {
       resultArticles = await APIRequest.requestCategoryPosts(category);
     }
     console.log(resultArticles);
-    this.setState({loading: false, articles: resultArticles})
+    this.setState({loading: false, articles: resultArticles, searchText: ''})
   }
 
-  renderArticle = (index, item) => {
-    <Article
-      text={item}
-    />
+  renderArticle = (item) => {
+    let url = item.url;
+    console.log(typeof url);
+    return(
+    <TouchableOpacity style={styles.article} onPress={() => Linking.openURL(url)}>
+      <Text style={human.title2}>{item.title}</Text>
+      <Text style={iOSUIKit.subhead}>{item.snippet}</Text>
+      <Text style={iOSUIKit.footnoteEmphasized}>{item.byline}</Text>
+      <Text style={material.caption}>{item.date}</Text>
+    </TouchableOpacity>)
   }
 
   keyExtractor = index => {
@@ -72,11 +79,11 @@ export default class App extends React.Component {
             <TextInput
               style={styles.textinput}
               onChangeText={text => this.onChangeText(text)}
-              onSubmitEditing={text => this.loadArticles(text)}
+              onSubmitEditing={() => this.loadArticles(this.state.searchText)}
               value={this.state.searchText}
             />
             <TouchableOpacity
-              onPress={text => this.loadArticles(text)}
+              onPress={() => this.loadArticles(this.state.searchText)}
               style={styles.button}>
               <FontAwesome
                 name='search'
@@ -86,15 +93,13 @@ export default class App extends React.Component {
             </TouchableOpacity>
           </View>
 
-
           <View style={styles.flatlist}>
-          <FlatList
-            data={this.state.articles}
-            renderItem={({ index, item }) => this.renderArticle(index, item)}
-            keyExtractor={(item, index) => this.keyExtractor(index)}
-          />
-          </FlatList>
-
+            <FlatList
+              data={this.state.articles}
+              renderItem={({ item }) => this.renderArticle( item )}
+              keyExtractor={(item, index) => this.keyExtractor(index)}
+            />
+          </View>
 
           {/*If you want to return custom stuff from the NYT API, checkout the APIRequest file!*/}
 
@@ -140,5 +145,19 @@ const styles = StyleSheet.create({
   button: {
     height: 25,
     paddingRight: 10
+  },
+  flatlist: {
+    flex: .7,
+    top: 110,
+    width: '100%',
+    height: '80%'
+  },
+  article: {
+    width: '100%',
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    padding: 20
   },
 });

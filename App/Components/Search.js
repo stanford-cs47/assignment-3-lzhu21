@@ -20,9 +20,9 @@ export default class Search extends Component {
     return (
       <View> {/*Some styles with a fancy background and padding...*/}
 
-        {/*user input and a search button!*/}
+      {/*user input and a search button!*/}
 
-      </View>
+    </View>
     );
   }
 }
